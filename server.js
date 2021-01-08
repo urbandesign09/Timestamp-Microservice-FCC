@@ -25,6 +25,30 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+//creating an API endpoint
+app.get("/api/timestamp/:date?", function (req, res) {
+  const dateItem = req.params.date;
+  const unixRegex = /^\d+$/g;
+  const allRegex = /\d{4}[\/-]?\d{2}[\/-]?\d{2}|\d{2}[\s]?\w+[\s]?\d{4}|\d{4}[\/-]?\d{2}|^\d+$|\d{2}[\/-]?\d{2}[\/-]?\d{4}[\/-]?|\d{4}/g;
+
+  if (unixRegex.test(dateItem)){ //this is for unix items
+    const unixItem = parseInt(dateItem);
+    const dateObj = new Date(unixItem);
+    res.json({unix: unixItem, utc: (dateObj.toUTCString())})
+  }
+  else if (allRegex.test(dateItem)){ //this is for everything else
+     res.json({unix: Date.parse(dateItem), utc: new Date(dateItem).toUTCString()})
+  }
+  else if (dateItem == undefined) { //this is for new
+    res.json({unix: Date.parse(new Date()), utc: new Date().toUTCString()})
+  }
+  else {
+    res.json({error: "Invalid Date"})
+  }
+   
+  } //res.json({})
+)
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
